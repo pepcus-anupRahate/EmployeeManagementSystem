@@ -4,21 +4,16 @@ using Microsoft.EntityFrameworkCore;
 
 namespace EmployeeManagementSystem.Services
 {
-    public class EmployeeService : IEmployeeService
+    public class EmployeeService(AppDbContext dbContext) : IEmployeeService
     {
-        private readonly AppDbContext _dbContext;
-
-        public EmployeeService(AppDbContext dbContext)
-        {
-            _dbContext = dbContext;
-        }
+        private readonly AppDbContext _dbContext = dbContext;
 
         public async Task<IEnumerable<Employee>> GetAllEmployeesAsync()
         {
             return await _dbContext.Employees.Include(e => e.Role).ToListAsync();
         }
 
-        public async Task<Employee> GetEmployeeByIdAsync(int id)
+        public async Task<Employee?> GetEmployeeByIdAsync(int id)
         {
             return await _dbContext.Employees.Include(e => e.Role).FirstOrDefaultAsync(e => e.Id == id);
         }

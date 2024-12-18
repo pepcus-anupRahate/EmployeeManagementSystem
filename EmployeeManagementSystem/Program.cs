@@ -1,6 +1,9 @@
 using EmployeeManagementSystem.Data;
+using EmployeeManagementSystem.Models;
 using EmployeeManagementSystem.Services;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -8,6 +11,10 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews();
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+//builder.Services.AddIdentity<Employee, Role>()
+//    .AddEntityFrameworkStores<AppDbContext>()
+//    .AddDefaultTokenProviders();
+
 builder.Services.AddScoped<IEmployeeService, EmployeeService>();
 
 var app = builder.Build();

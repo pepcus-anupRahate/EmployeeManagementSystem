@@ -7,14 +7,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace EmployeeManagementSystem.Controllers
 {
-    public class EmployeeController : Controller
+    public class EmployeeController(IEmployeeService employeeService) : Controller
     {
-        private readonly IEmployeeService _employeeService;
-
-        public EmployeeController(IEmployeeService employeeService)
-        {
-            _employeeService = employeeService;
-        }
+        private readonly IEmployeeService _employeeService = employeeService;
 
         public async Task<IActionResult> Index()
         {
@@ -42,12 +37,13 @@ namespace EmployeeManagementSystem.Controllers
         public async Task<IActionResult> Edit(int id)
         {
             var employee = await _employeeService.GetEmployeeByIdAsync(id);
-            if (employee == null) return NotFound();
+            if (employee is null) return NotFound();
             ViewBag.Roles = new SelectList(await _employeeService.GetRolesAsync(), "Id", "Name");
             return View(employee);
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, Employee employee)
         {
             if (id != employee.Id)
@@ -78,7 +74,7 @@ namespace EmployeeManagementSystem.Controllers
         public async Task<IActionResult> Details(int id)
         {
             var employee = await _employeeService.GetEmployeeByIdAsync(id);
-            if (employee == null)
+            if (employee is null)
             {
                 return NotFound();
             }
@@ -89,7 +85,7 @@ namespace EmployeeManagementSystem.Controllers
         public async Task<IActionResult> Delete(int id)
         {
             var employee = await _employeeService.GetEmployeeByIdAsync(id);
-            if (employee == null) return NotFound();
+            if (employee is null) return NotFound();
             return View(employee);
         }
 
