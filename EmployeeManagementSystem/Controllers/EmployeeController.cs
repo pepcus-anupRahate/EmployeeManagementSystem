@@ -1,12 +1,13 @@
 ﻿using EmployeeManagementSystem.Models;
 using EmployeeManagementSystem.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
 
 namespace EmployeeManagementSystem.Controllers
 {
+    [Authorize]
     public class EmployeeController(IEmployeeService employeeService) : Controller
     {
         private readonly IEmployeeService _employeeService = employeeService;

@@ -3,12 +3,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace EmployeeManagementSystem.Data
 {
-    public class AppDbContext : DbContext
+    public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(options)
     {
         public DbSet<Employee> Employees { get; set; }
         public DbSet<Role> Roles { get; set; }
 
-        public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
