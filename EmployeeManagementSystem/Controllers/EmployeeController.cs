@@ -8,9 +8,10 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 namespace EmployeeManagementSystem.Controllers
 {
     [Authorize]
-    public class EmployeeController(IEmployeeService employeeService) : Controller
+    public class EmployeeController(IEmployeeService employeeService, ILogger<EmployeeController> logger) : Controller
     {
         private readonly IEmployeeService _employeeService = employeeService;
+        private readonly ILogger<EmployeeController> _logger = logger;
 
         public async Task<IActionResult> Index()
         {
@@ -109,7 +110,8 @@ namespace EmployeeManagementSystem.Controllers
                 var message = exceptionDetails.Error.Message;
                 var stackTrace = exceptionDetails.Error.StackTrace;
 
-                Console.WriteLine($"Exception caught in Error action. Path: {path}, Message: {message}");
+                // Log exception details
+                _logger.LogError($"Exception caught in Error action. Path: {path}, Message: {message}, StackTrace: {stackTrace}");
             }
 
             return View("Error");

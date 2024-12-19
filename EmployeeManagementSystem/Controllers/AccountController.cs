@@ -14,7 +14,7 @@ namespace EmployeeManagementSystem.Controllers
         public IActionResult Login()
         {
             Response.Cookies.Delete("AuthToken");
-            return View();
+            return View("Login");
         }
 
         [HttpPost]
@@ -35,14 +35,6 @@ namespace EmployeeManagementSystem.Controllers
                 return RedirectToAction("Index", "Employee");
             }
             return Unauthorized();
-        }
-
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Logout()
-        {
-            await HttpContext.SignOutAsync();
-            return RedirectToAction("Login", "Account");
         }
 
         [HttpGet]
