@@ -1,9 +1,12 @@
-﻿namespace EmployeeManagementSystem.Models
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace EmployeeManagementSystem.Models
 {
-    public class Role
+    public class Role : BaseModel
     {
-        public int Id { get; set; }
-        public string Name { get; set; }
+        [Required(ErrorMessage = "Name is required.")]
+        [StringLength(100, ErrorMessage = "Name must not exceed 100 characters.")]
+        public required string Name { get; set; }
         public ICollection<Employee> Employees { get; set; }
     }
 }

@@ -1,20 +1,18 @@
 ﻿using EmployeeManagementSystem.Models;
 using EmployeeManagementSystem.Services;
+using EmployeeManagementSystem.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
 
 namespace EmployeeManagementSystem.Controllers
 {
-    public class EmployeeController : Controller
+    [Authorize]
+    public class EmployeeController(IEmployeeService employeeService, ILogger<EmployeeController> logger) : Controller
     {
-        private readonly IEmployeeService _employeeService;
-
-        public EmployeeController(IEmployeeService employeeService)
-        {
-            _employeeService = employeeService;
-        }
+        private readonly IEmployeeService _employeeService = employeeService;
+        private readonly ILogger<EmployeeController> _logger = logger;
 
         public async Task<IActionResult> Index()
         {
@@ -29,25 +27,35 @@ namespace EmployeeManagementSystem.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create(Employee employee)
+        public async Task<IActionResult> Create(CreateEmployeeViewModel employeeVM)
         {
             if (ModelState.IsValid)
             {
+                // Map CreateEmployeeViewModel to Employee domain model
+                var employee = new Employee
+                {
+                    Name = employeeVM.Name,
+                    Email = employeeVM.Email,
+                    RoleId = employeeVM.RoleId,
+                    Role = employeeVM.Role
+                };
+
                 await _employeeService.AddEmployeeAsync(employee);
                 return RedirectToAction(nameof(Index));
             }
-            return View(employee);
+            return View(employeeVM);
         }
 
         public async Task<IActionResult> Edit(int id)
         {
             var employee = await _employeeService.GetEmployeeByIdAsync(id);
-            if (employee == null) return NotFound();
+            if (employee is null) return NotFound();
             ViewBag.Roles = new SelectList(await _employeeService.GetRolesAsync(), "Id", "Name");
             return View(employee);
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, Employee employee)
         {
             if (id != employee.Id)
@@ -78,7 +86,7 @@ namespace EmployeeManagementSystem.Controllers
         public async Task<IActionResult> Details(int id)
         {
             var employee = await _employeeService.GetEmployeeByIdAsync(id);
-            if (employee == null)
+            if (employee is null)
             {
                 return NotFound();
             }
@@ -89,7 +97,7 @@ namespace EmployeeManagementSystem.Controllers
         public async Task<IActionResult> Delete(int id)
         {
             var employee = await _employeeService.GetEmployeeByIdAsync(id);
-            if (employee == null) return NotFound();
+            if (employee is null) return NotFound();
             return View(employee);
         }
 
@@ -112,7 +120,8 @@ namespace EmployeeManagementSystem.Controllers
                 var message = exceptionDetails.Error.Message;
                 var stackTrace = exceptionDetails.Error.StackTrace;
 
-                Console.WriteLine($"Exception caught in Error action. Path: {path}, Message: {message}");
+                // Log exception details
+                _logger.LogError($"Exception caught in Error action. Path: {path}, Message: {message}, StackTrace: {stackTrace}");
             }
 
             return View("Error");
