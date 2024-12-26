@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using EmployeeManagementSystem.Controllers;
 using EmployeeManagementSystem.Models;
 using EmployeeManagementSystem.Services;
+using EmployeeManagementSystem.ViewModels;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -83,10 +84,11 @@ namespace EmployeeManagementSystem.Test.ControllerTest
         {
             // Arrange
             var employee = new Employee { Id = 1, Name = "Anup", Email = "anup@ra.com", RoleId = 1, Role = new Role { Id = 1, Name = "Admin"} };
+            var employeeVM = new CreateEmployeeViewModel { Id = 1, Name = "Anup", Email = "anup@ra.com", RoleId = 1, Role = new Role { Id = 1, Name = "Admin" } };
             _mockEmployeeService.Setup(service => service.AddEmployeeAsync(employee)).Returns(Task.CompletedTask);
 
             // Act
-            var result = await _controller.Create(employee) as RedirectToActionResult;
+            var result = await _controller.Create(employeeVM) as RedirectToActionResult;
 
             // Assert
             Assert.That(result, Is.Not.Null);
@@ -97,15 +99,16 @@ namespace EmployeeManagementSystem.Test.ControllerTest
         public async Task Create_InvalidModelState_ShouldReturnViewWithEmployee()
         {
             // Arrange
-            var employee = new Employee { Id = 1, Name = "Anup", Email = "anup@ra.com" };
+            var employee = new Employee { Id = 1, Name = "Anup", Email = "anup@ra.com", RoleId = 1, Role = new Role { Id = 1, Name = "Admin" } };
+            var employeeVM = new CreateEmployeeViewModel { Id = 1, Name = "Anup", Email = "anup@ra.com", RoleId = 1, Role = new Role { Id = 1, Name = "Admin" } };
             _controller.ModelState.AddModelError("Name", "Name is required");
 
             // Act
-            var result = await _controller.Create(employee) as ViewResult;
+            var result = await _controller.Create(employeeVM) as ViewResult;
 
             // Assert
             Assert.That(result, Is.Not.Null);
-            Assert.That(result.Model, Is.EqualTo(employee));
+            Assert.That(result.Model, Is.EqualTo(employeeVM));
             _mockEmployeeService.Verify(service => service.AddEmployeeAsync(It.IsAny<Employee>()), Times.Never);
         }
 

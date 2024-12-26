@@ -6,24 +6,28 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Authentication.Cookies;
 
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
-builder.Services.AddDbContext<AppDbContext>(options =>
+builder.Services.AddDbContext<EmployeeManagementDBContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 builder.Services.AddIdentity<IdentityUser, IdentityRole>()
-    .AddEntityFrameworkStores<AppDbContext>()
+    .AddEntityFrameworkStores<EmployeeManagementDBContext>()
     .AddDefaultTokenProviders();
 
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
     options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+
 })
+
+
 .AddJwtBearer(options =>
 {
     options.TokenValidationParameters = new TokenValidationParameters
@@ -42,6 +46,7 @@ builder.Services.AddAuthentication(options =>
         OnAuthenticationFailed = context =>
         {
             context.Response.StatusCode = 401;
+            context.Response.Redirect("/Account/AccessDenied"); // Redirect to AccessDenied page
             return Task.CompletedTask;
         }
     };
@@ -51,10 +56,11 @@ builder.Services.AddAuthorizationBuilder()
     .AddPolicy("AdminPolicy", policy => policy.RequireClaim("Role", "Admin"))
     .AddPolicy("ManagerPolicy", policy => policy.RequireClaim("Role", "Manager"));
 
+var startupHelper = new Configuration(builder.Services);
+startupHelper.SetUpServices();
 
-
-builder.Services.AddScoped<IEmployeeService, EmployeeService>();
-builder.Services.AddScoped<IJwtTokenService, JwtTokenService>();
+//builder.Services.AddScoped<IEmployeeService, EmployeeService>();
+//builder.Services.AddScoped<IJwtTokenService, JwtTokenService>();
 
 
 var app = builder.Build();
@@ -62,7 +68,7 @@ var app = builder.Build();
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
-    app.UseExceptionHandler("/Home/Error");
+    app.UseExceptionHandler("/Account/AccessDenied");
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }

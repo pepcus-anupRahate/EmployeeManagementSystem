@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace EmployeeManagementSystem.Data
 {
-    public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(options)
+    public class EmployeeManagementDBContext(DbContextOptions<EmployeeManagementDBContext> options) : DbContext(options)
     {
         public DbSet<Employee> Employees { get; set; }
         public DbSet<Role> Roles { get; set; }

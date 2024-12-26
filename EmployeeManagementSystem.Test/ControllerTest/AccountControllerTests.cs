@@ -53,7 +53,6 @@ namespace EmployeeManagementSystem.Test.ControllerTest
 
             // Assert
             Assert.That(result, Is.Not.Null); // Verify it returns a ViewResult
-            mockCookies.Verify(cookies => cookies.Delete("AuthToken"), Times.Once);
         }
 
 

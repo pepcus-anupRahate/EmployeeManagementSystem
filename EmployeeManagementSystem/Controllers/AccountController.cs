@@ -1,5 +1,6 @@
 ﻿using EmployeeManagementSystem.Services;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -13,7 +14,6 @@ namespace EmployeeManagementSystem.Controllers
         [HttpGet]
         public IActionResult Login()
         {
-            Response.Cookies.Delete("AuthToken");
             return View("Login");
         }
 
@@ -35,6 +35,21 @@ namespace EmployeeManagementSystem.Controllers
                 return RedirectToAction("Index", "Employee");
             }
             return Unauthorized();
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Logout()
+        {
+            await HttpContext.SignOutAsync();
+            Response.Cookies.Delete("AuthToken");
+            return RedirectToAction(nameof(Login));
+        }
+
+        [HttpGet("/Account/AccessDenied")]
+        public IActionResult AccessDenied()
+        {
+            return View();
         }
 
         [HttpGet]

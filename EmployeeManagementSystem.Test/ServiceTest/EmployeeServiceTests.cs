@@ -9,17 +9,17 @@ namespace EmployeeManagementSystem.Test.ServiceTest
     public class EmployeeServiceTests
     {
         private EmployeeService _employeeService;
-        private AppDbContext _dbContext;
+        private EmployeeManagementDBContext _dbContext;
 
         [SetUp]
         public void SetUp()
         {
             // Set up an in-memory database
-            var options = new DbContextOptionsBuilder<AppDbContext>()
+            var options = new DbContextOptionsBuilder<EmployeeManagementDBContext>()
                 .UseInMemoryDatabase(Guid.NewGuid().ToString())
                 .Options;
 
-            _dbContext = new AppDbContext(options);
+            _dbContext = new EmployeeManagementDBContext(options);
             _dbContext.Database.EnsureCreated();           
 
             _dbContext.Employees.AddRange(new List<Employee>
@@ -70,6 +70,7 @@ namespace EmployeeManagementSystem.Test.ServiceTest
         public async Task AddEmployeeAsync_ShouldAddEmployeeToDb()
         {
             // Arrange
+            var allEmp = await _employeeService.GetAllEmployeesAsync();
             var newEmployee = new Employee { Id = 3, Name = "Sam Smith", Email = "sam@sam.com"};
 
             // Act
@@ -100,7 +101,7 @@ namespace EmployeeManagementSystem.Test.ServiceTest
         public async Task DeleteEmployeeAsync_ShouldDeleteEmployee_WhenEmployeeExists()
         {
             // Arrange
-            var employee = await _dbContext.Employees.FindAsync(1);
+            //var employee = await _dbContext.Employees.FindAsync(1);
 
             // Act
             await _employeeService.DeleteEmployeeAsync(1);

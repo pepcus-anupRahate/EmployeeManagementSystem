@@ -1,5 +1,6 @@
 ﻿using EmployeeManagementSystem.Models;
 using EmployeeManagementSystem.Services;
+using EmployeeManagementSystem.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
@@ -26,14 +27,23 @@ namespace EmployeeManagementSystem.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create(Employee employee)
+        public async Task<IActionResult> Create(CreateEmployeeViewModel employeeVM)
         {
             if (ModelState.IsValid)
             {
+                // Map CreateEmployeeViewModel to Employee domain model
+                var employee = new Employee
+                {
+                    Name = employeeVM.Name,
+                    Email = employeeVM.Email,
+                    RoleId = employeeVM.RoleId,
+                    Role = employeeVM.Role
+                };
+
                 await _employeeService.AddEmployeeAsync(employee);
                 return RedirectToAction(nameof(Index));
             }
-            return View(employee);
+            return View(employeeVM);
         }
 
         public async Task<IActionResult> Edit(int id)

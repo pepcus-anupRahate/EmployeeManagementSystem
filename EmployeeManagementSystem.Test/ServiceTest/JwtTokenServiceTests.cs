@@ -1,10 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
+﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
-using System.Text;
-using System.Threading.Tasks;
 using EmployeeManagementSystem.Services;
 using Microsoft.Extensions.Configuration;
 using Moq;
@@ -54,5 +49,20 @@ namespace EmployeeManagementSystem.Test.ServiceTest
                 Assert.That(jwtSecurityToken.Audiences.First(), Is.EqualTo(_mockConfiguration.Object["Jwt:Audience"]));
             });
         }
+
+        //[Test]
+        //public void SetUpServices()
+        //{
+        //    var builder = WebApplication.CreateBuilder(new string[0]);
+        //    var startupHelper = new Configuration(builder.Services);
+
+        //    startupHelper.SetUpServices();
+
+        //    var app = builder.Build();
+
+        //    var myImplementation = app.Services.GetService<IEmployeeService>();
+        //    Assert.That(myImplementation, Is.Not.Null);
+        //    Assert.That(myImplementation is EmployeeService, Is.True);
+        //}
     }
 }

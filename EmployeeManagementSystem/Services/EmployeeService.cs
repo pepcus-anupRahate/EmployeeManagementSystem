@@ -4,9 +4,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace EmployeeManagementSystem.Services
 {
-    public class EmployeeService(AppDbContext dbContext) : IEmployeeService
+    public class EmployeeService(EmployeeManagementDBContext dbContext) : IEmployeeService
     {
-        private readonly AppDbContext _dbContext = dbContext;
+        private readonly EmployeeManagementDBContext _dbContext = dbContext;
 
         public async Task<IEnumerable<Employee>> GetAllEmployeesAsync()
         {

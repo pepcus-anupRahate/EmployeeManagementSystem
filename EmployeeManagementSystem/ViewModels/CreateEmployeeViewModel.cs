@@ -1,8 +1,9 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using EmployeeManagementSystem.Models;
+using System.ComponentModel.DataAnnotations;
 
-namespace EmployeeManagementSystem.Models
+namespace EmployeeManagementSystem.ViewModels
 {
-    public class Employee : BaseModel
+    public class CreateEmployeeViewModel : BaseViewModel
     {
         [Required(ErrorMessage = "Name is required.")]
         [StringLength(100, ErrorMessage = "Name must not exceed 100 characters.")]
